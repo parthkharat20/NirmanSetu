@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  sitecommand:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sitecommand
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - GROQ_API_KEY=${GROQ_API_KEY}
+    volumes:
+      - sitecommand_data:/app/data
+      # Make sure to map SQLite to the persistent volume in the code, or just map the root dir's db file.
+      # To keep it simple, we'll map the db file directly:
+      - ./sitecommand.db:/app/sitecommand.db
+      - ./sitecommand.db-wal:/app/sitecommand.db-wal
+      - ./sitecommand.db-shm:/app/sitecommand.db-shm
+
+volumes:
+  sitecommand_data:
